@@ -123,212 +123,257 @@ paths:
                   msg:
                     type: string
 /api/api/s3/get-object/{objectKey}:
-    get:
-      summary: Get Object
-      description: Fetch an object by its key (file name).
-      parameters:
-        - in: path
-          name: objectKey
-          required: true
-          description: Object key (file name)
-          schema:
-            type: string
-      responses:
-        "200":
-          description: Object found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-                  fetchedObject:
-                    type: object
-        "404":
-          description: Object not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-        "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-/api/object/{bucketName}/upload:
-    post:
-      summary: Upload Object
-      description: Upload an object (file) to the specified bucket.
-      parameters:
-        - in: path
-          name: bucketName
-          required: true
-          description: Name of the bucket to upload the object to.
-          schema:
-            type: string
-      requestBody:
+  get:
+    summary: Get Object
+    description: Fetch an object by its key (file name).
+    parameters:
+      - in: path
+        name: objectKey
         required: true
+        description: Object key (file name)
+        schema:
+          type: string
+    responses:
+      "200":
+        description: Object found successfully
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
-                file:
+                sts:
                   type: string
-                  format: binary
-      responses:
-        '201':
-          description: Object uploaded successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-        '400':
-          description: Bad request
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-        '401':
-          description: Unauthorized
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-/api/s3/list-buckets:
-    get:
-      summary: List Buckets
-      description: Fetch all buckets belonging to the authenticated user.
-      responses:
-        '200':
-          description: Buckets found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-                  listBucket:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        bucketName:
-                          type: string
-                        bucketObjects:
-                          type: array
-                          items:
-                            type: object
-                            properties:
-                              objectName:
-                                type: string
-                              objectPath:
-                                type: string
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-/api/s3/list-object/{bucketId}:
-    get:
-      summary: List Objects from Bucket
-      description: Fetch all objects within the specified bucket.
-      parameters:
-        - in: path
-          name: bucketId
-          required: true
-          description: ID of the bucket to list objects from.
+                msg:
+                  type: string
+                fetchedObject:
+                  type: object
+      "404":
+        description: Object not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+/api/object/{bucketName}/upload:
+  post:
+    summary: Upload Object
+    description: Upload an object (file) to the specified bucket.
+    parameters:
+      - in: path
+        name: bucketName
+        required: true
+        description: Name of the bucket to upload the object to.
+        schema:
+          type: string
+    requestBody:
+      required: true
+      content:
+        multipart/form-data:
           schema:
-            type: string
-      responses:
-        '200':
-          description: Objects found successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-                  listObject:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        objectName:
-                          type: string
-                        objectPath:
-                          type: string
-        '404':
-          description: Bucket not found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
-        '500':
-          description: Internal Server Error
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  sts:
-                    type: string
-                  msg:
-                    type: string
+            type: object
+            properties:
+              file:
+                type: string
+                format: binary
+    responses:
+      "201":
+        description: Object uploaded successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "400":
+        description: Bad request
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "401":
+        description: Unauthorized
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+/api/s3/list-buckets:
+  get:
+    summary: List Buckets
+    description: Fetch all buckets belonging to the authenticated user.
+    responses:
+      "200":
+        description: Buckets found successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+                listBucket:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      bucketName:
+                        type: string
+                      bucketObjects:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            objectName:
+                              type: string
+                            objectPath:
+                              type: string
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+/api/s3/list-object/{bucketId}:
+  get:
+    summary: List Objects from Bucket
+    description: Fetch all objects within the specified bucket.
+    parameters:
+      - in: path
+        name: bucketId
+        required: true
+        description: ID of the bucket to list objects from.
+        schema:
+          type: string
+    responses:
+      "200":
+        description: Objects found successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+                listObject:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      objectName:
+                        type: string
+                      objectPath:
+                        type: string
+      "404":
+        description: Bucket not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+/api/s3/delete-object/{objectKey}:
+  delete:
+    summary: Delete Object
+    description: Delete an object (file) from the specified bucket.
+    parameters:
+      - in: path
+        name: objectKey
+        required: true
+        description: Key (filename) of the object to delete.
+        schema:
+          type: string
+    responses:
+      "200":
+        description: Object deleted successfully
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "404":
+        description: Object not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string
+      "500":
+        description: Internal Server Error
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sts:
+                  type: string
+                msg:
+                  type: string

@@ -79,7 +79,7 @@ export const putObject = async (req, res) => {
         await bucket.save();
         res
           .status(201)
-          .json({ sts: "01", msg: "Object uploaded successfully" });
+          .json({ sts: "01", msg: "Object uploaded successfully", newObject });
       } catch (error) {
         res.status(500).json({ sts: "00", msg: "Internal Server Error" });
       }
@@ -152,7 +152,6 @@ export const listBucket = async (req, res) => {
     } else {
       res.status(404).json({ sts: "00", msg: "Bucket not found" });
     }
-    
   } catch (error) {
     res.status(500).json({ sts: "00", msg: "Internal Server Error" });
   }
@@ -178,6 +177,54 @@ export const listObjectFromBucket = async (req, res) => {
       res.status(404).json({ sts: "00", msg: "Bucket not found" });
     }
   } catch (error) {
+    res.status(500).json({ sts: "00", msg: "Internal Server Error" });
+  }
+};
+
+// Delete an object from the bucket and object DB
+export const deleteObject = async (req, res) => {
+  const userId = req.user._id;
+  const objectName = req.params.objectKey;
+
+  try {
+    const deletingObject = await Object.findOne({ objectName, userId });
+
+    if (deletingObject) {
+      // Get the object path
+      const objectPath = deletingObject.objectPath;
+
+      // Delete the file associated with the object
+      fs.unlink(objectPath, async (err) => {
+        if (err) {
+          console.error(err);
+          return res
+            .status(500)
+            .json({ sts: "00", msg: "Failed to delete object file" });
+        }
+
+        // Get the existing bucket
+        const bucketId = deletingObject.bucketId;
+        const bucket = await Bucket.findById(bucketId);
+
+        // Remove the object from the bucket
+        bucket.bucketObjects.pull(deletingObject._id);
+
+        const updateBucket = await bucket.save();
+        const deleteObject = await Object.deleteOne({ objectName, userId });
+
+        if (updateBucket && deleteObject.deletedCount === 1) {
+          res
+            .status(200)
+            .json({ sts: "01", msg: "Object deleted successfully" });
+        } else {
+          res.status(500).json({ sts: "00", msg: "Object failed to delete" });
+        }
+      });
+    } else {
+      res.status(404).json({ sts: "00", msg: "Object not found" });
+    }
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ sts: "00", msg: "Internal Server Error" });
   }
 };
