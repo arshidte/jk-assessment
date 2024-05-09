@@ -13,8 +13,8 @@ APIs are,
 Register User, Login User, getObject, putObject, listBucket, listObjectFromBucket and deleteObject.
 
 
-Proper autherization and authentication done with the help of JWT Token
+- Proper autherization and authentication done with the help of JWT Token
 
-Data has streamed in getObject.
+- Data has streamed in getObject.
 
-Pagination implemented in listBucket.
+- Pagination implemented in listBucket.
