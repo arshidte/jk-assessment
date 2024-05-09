@@ -4,7 +4,7 @@ This Node.Js express application does getObject, putObject, Delete object, List 
 
 ## To run,
 
-`npm install` to install the node modules. After that 'npm run server' to run the application.
+`npm install` to install the node modules. After that `npm run server` to run the application.
 
 The MongoDB database has setup in MongoDB Cloud.
 
