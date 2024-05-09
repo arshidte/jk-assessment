@@ -1,12 +1,10 @@
-import fs from "fs";
 import Object from "../models/objectModel.js";
 import Bucket from "../models/bucketModel.js";
 import User from "../models/userModel.js";
+import fs from "fs";
 
 // Get object
 export const getObject = async (req, res) => {
-  const userId = req.user._id;
-
   // Get the object key(file name) and bucket name from params
   const objectName = req.params.objectKey;
 
@@ -14,14 +12,27 @@ export const getObject = async (req, res) => {
   try {
     // Fetch the object details from database
     const fetchedObject = await Object.findOne({
-      userId,
       objectName,
     });
 
+    console.log(fetchedObject);
+
     if (fetchedObject) {
-      res
-        .status(200)
-        .json({ sts: "01", msg: "Object found successfully", fetchedObject });
+      // Get the file path from the fetched object
+      const filePath = fetchedObject.objectPath;
+
+      // Create a read stream from the file
+      const stream = fs.createReadStream(filePath);
+
+      // Set response headers
+      res.setHeader("Content-Type", "application/octet-stream");
+      res.setHeader(
+        "Content-Disposition",
+        `attachment; filename="${objectName}"`
+      );
+
+      // Pipe the file stream to the response object
+      stream.pipe(res);
     } else {
       res.status(404).json({ sts: "00", msg: "Object not found" });
     }
@@ -118,19 +129,32 @@ export const putObject = async (req, res) => {
 export const listBucket = async (req, res) => {
   const userId = req.user._id;
 
+  // For pagination
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 10;
+
   try {
-    const user = await User.findById(userId).populate({
-      path: "buckets",
-      select: "bucketName bucketObjects",
-      populate: { path: "bucketObjects", select: "objectName objectPath" },
-    });
-    res.status(200).json({
-      sts: "01",
-      msg: "Bucket found successfully",
-      listBucket: user.buckets,
-    });
+    const user = await User.findById(userId)
+      .populate({
+        path: "buckets",
+        select: "bucketName bucketObjects",
+        populate: { path: "bucketObjects", select: "objectName objectPath" },
+      })
+      .skip((page - 1) * limit)
+      .limit(limit);
+
+    if (user) {
+      res.status(200).json({
+        sts: "01",
+        msg: "Bucket found successfully",
+        listBucket: user.buckets,
+      });
+    } else {
+      res.status(404).json({ sts: "00", msg: "Bucket not found" });
+    }
+    
   } catch (error) {
-    request.status(500).json({ sts: "00", msg: "Internal Server Error" });
+    res.status(500).json({ sts: "00", msg: "Internal Server Error" });
   }
 };
 
