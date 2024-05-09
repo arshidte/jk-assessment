@@ -9,7 +9,9 @@ This Node.Js express application does getObject, putObject, Delete object, List 
 The MongoDB database has setup in MongoDB Cloud.
 
 APIs are,
+
 Register User, Login User, getObject, putObject, listBucket, listObjectFromBucket and deleteObject.
+
 
 Proper autherization and authentication done with the help of JWT Token
 
